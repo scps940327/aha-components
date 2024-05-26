@@ -1,16 +1,27 @@
+import THEME from "helpers/theme";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { routes } from "../constants/route";
 import LogoIcon from "./LogoIcon";
 
 const PageHeaderContainer = styled.div`
-  background-color: #1b1b1b;
+  background-color: ${THEME.colors.BG_LIGHT};
   width: 80px;
+
+  ${THEME.breakpoints.down('md')} {
+    background-color: ${THEME.colors.BG_DARK};
+    width: 100%;
+    padding-left: 21px;
+  }
 `;
 
 const LogoWrapper = styled.div`
   margin: 20px 0;
   text-align: center;
+
+  ${THEME.breakpoints.down('md')} {
+    text-align: left;
+  }
 `;
 
 const MenuItemIcon = styled.div<{ isActive?: boolean }>`
@@ -51,21 +62,53 @@ const StyledMenuItem = styled(Link)<{ isActive?: boolean }>`
   display: block;
   padding: 20px;
 
-  > div {
+  ${THEME.breakpoints.down('md')} {
+    padding: 0;
+  }
+
+  .menu-title {
     font-family: Ubuntu;
     font-size: 12px;
     font-weight: normal;
     line-height: 18px;
     letter-spacing: 0.4000000059604645px;
     min-width: 1px;
+
+    ${THEME.breakpoints.down('md')} {
+      display: none;
+    }
+
   }
 `;
 
 const StyledMenuUl = styled.ul`
   padding: 0;
   margin: 0;
+
+  ${THEME.breakpoints.down('md')} {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    box-shadow: 0px 0.5px 0px 0px #000000CC inset;
+  }
+
+  ${THEME.breakpoints.down('md')} {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    background-color: ${THEME.colors.BG_LIGHT};
+    box-shadow: 0px 0.5px 0px 0px #000000CC inset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 66px;
+  }
+
   > li {
     list-style-type: none;
+    margin: 0 25px;
   }
 `;
 
@@ -78,18 +121,17 @@ const PageHeader = () => {
         <LogoIcon />
       </LogoWrapper>
       <StyledMenuUl>
-        {routes.map(({ path, title, isMenu }) => {
+        {routes.map(({ path, title, isMenu, key }) => {
           if (!isMenu) {
             return null;
           }
           const formattedPath = path.startsWith('/') ? path : `/${path}`;
           const isActive = formattedPath.split('/')[1] === location.pathname.split('/')[1];
-          console.log('formattedPath', formattedPath);
           return (
-            <li>
+            <li key={key}>
               <StyledMenuItem to={path} isActive={isActive}>
                 <MenuItemIcon isActive={isActive} />
-                <div>{isActive ? title : ''}</div>
+                <div className="menu-title">{isActive ? title : ''}</div>
               </StyledMenuItem>
             </li>
           )

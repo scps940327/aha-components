@@ -1,11 +1,12 @@
 import TextField from '@mui/material/TextField';
+import THEME from 'helpers/theme';
 import styled from 'styled-components';
 
 const Input = styled(TextField)`
   .MuiOutlinedInput-root {
     &:hover {
       .MuiOutlinedInput-notchedOutline {
-        border: 3px solid #FF9B33;
+        border: 3px solid ${THEME.colors.BORDER_HOVER};
       }
     }
   }
@@ -17,7 +18,7 @@ const Input = styled(TextField)`
 
   .MuiOutlinedInput-root.Mui-focused {
     .MuiOutlinedInput-notchedOutline {
-      border: 3px solid #FF9B33;
+      border: 3px solid ${THEME.colors.BORDER_HOVER};
     }
   }
 

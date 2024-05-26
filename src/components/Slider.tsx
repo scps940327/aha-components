@@ -34,7 +34,7 @@ const Slider = styled(RawSlider)`
   }
 
   .MuiSlider-thumb {
-    background: ${THEME.colors.backgroundPage};
+    background: ${THEME.colors.BG_DARK};
     border: 6px solid #FFD05D;
 
     &:hover,
