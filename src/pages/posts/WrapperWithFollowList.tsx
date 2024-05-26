@@ -73,7 +73,6 @@ const AccountRow = ({ fullName, userName, imgUrl, isFollowing }: AccountRowProps
 const FollowList = () => {
   const [activeTab, setActiveTab] = useState(tabKey.following);
   const { data, error, isLoading, refetch } = useGetFollowerListApiQuery();
-  console.log('data', data);
 
   const followerList = useMemo(() => (data?.data.list ?? []).filter(({ isFollowing }) => isFollowing), [data?.data.list]);
 
