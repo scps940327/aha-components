@@ -14,7 +14,7 @@ import WrapperWithFollowList from "./WrapperWithFollowList";
 const SearchButton = styled(Button.Normal)`
   width: 343px;
 
-  ${THEME.breakpoints.down('sm')} {
+  ${THEME.breakpoints.down('md')} {
     width: 100%;
   }
 `;

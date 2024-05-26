@@ -11,7 +11,7 @@ interface RouteConfig {
 export const routes: RouteConfig[] = [
   {
     path: "/",
-    key: 'post',
+    key: 'post-search',
     title: 'Home',
     element: <SearchPage />,
     isMenu: true,
@@ -22,8 +22,8 @@ export const routes: RouteConfig[] = [
     element: <ListPage />,
   },
   {
-    path: "tags/list",
-    key: 'tags-list',
+    path: "tag/list",
+    key: 'tag-list',
     title: 'Tags',
     element: <TagsPage />,
     isMenu: true,
