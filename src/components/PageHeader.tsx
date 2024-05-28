@@ -81,7 +81,7 @@ const StyledMenuItem = styled(Link)<{ isActive?: boolean }>`
   }
 `;
 
-const StyledMenuUl = styled.ul`
+const StyledMenuUl = styled.ul<{ isHome?: boolean }>`
   padding: 0;
   margin: 0;
 
@@ -90,17 +90,9 @@ const StyledMenuUl = styled.ul`
     width: 100%;
     bottom: 0;
     left: 0;
-    box-shadow: 0px 0.5px 0px 0px #000000CC inset;
-  }
-
-  ${THEME.breakpoints.down('md')} {
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-    left: 0;
     background-color: ${THEME.colors.BG_LIGHT};
     box-shadow: 0px 0.5px 0px 0px #000000CC inset;
-    display: flex;
+    display: ${({ isHome }) => isHome ? 'flex' : 'none'};
     align-items: center;
     justify-content: center;
     height: 66px;
@@ -108,28 +100,39 @@ const StyledMenuUl = styled.ul`
 
   > li {
     list-style-type: none;
-    margin: 0 25px;
+
+    ${THEME.breakpoints.down('md')} {
+      margin: 0 25px;
+    }
   }
 `;
 
+const formatRoutePathToPathname = (path?: string) => path?.startsWith('/') ? path : `/${path}`;
+
 const PageHeader = () => {
   const location = useLocation();
+  const isHome = location.pathname === '/';
+  const currentRouteConfig = routes.find(({ path = '' }) =>
+    formatRoutePathToPathname(path) === location.pathname
+);
 
   return (
     <PageHeaderContainer>
       <LogoWrapper>
         <LogoIcon />
       </LogoWrapper>
-      <StyledMenuUl>
-        {routes.map(({ path, title, isMenu, key }) => {
+      <StyledMenuUl isHome={isHome}>
+        {routes.map(({ path = '', title, id, isMenu }) => {
           if (!isMenu) {
             return null;
           }
-          const formattedPath = path.startsWith('/') ? path : `/${path}`;
-          const isActive = formattedPath.split('/')[1] === location.pathname.split('/')[1];
+          const isActive = Boolean(
+            currentRouteConfig?.id &&
+            currentRouteConfig?.id?.split('-')[0] === id?.split('-')[0]
+          );
           return (
-            <li key={key}>
-              <StyledMenuItem to={path} isActive={isActive}>
+            <li key={id}>
+              <StyledMenuItem to={formatRoutePathToPathname(path)} isActive={isActive} relative='path'>
                 <MenuItemIcon isActive={isActive} />
                 <div className="menu-title">{isActive ? title : ''}</div>
               </StyledMenuItem>

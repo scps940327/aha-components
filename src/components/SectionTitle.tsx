@@ -13,7 +13,7 @@ const StyledBackToLink = styled(Link)`
   margin-right: 12px;
 `;
 
-const PageTitle = ({ title, backTo }: IProps) => {
+const SectionTitle = ({ title, backTo }: IProps) => {
   return (
     <Box display="flex" alignItems="flex-end" marginBottom="20px">
       {backTo && (
@@ -26,4 +26,4 @@ const PageTitle = ({ title, backTo }: IProps) => {
   )
 }
 
-export default PageTitle;
+export default SectionTitle;

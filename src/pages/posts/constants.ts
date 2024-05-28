@@ -24,3 +24,8 @@ export const perPageCountConfigs = [
     value: 50,
   },
 ];
+
+export const searchFormKey = {
+  KEYWORD: 'keyword',
+  COUNT: 'count',
+} as const;

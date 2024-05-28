@@ -1,14 +1,15 @@
 import { Box } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
 import Button from "components/Button";
+import LoadingPanel from "components/LoadingPanel";
 import Page from "components/Page";
 import SectionTitle from "components/SectionTitle";
 import THEME from "helpers/theme";
+import useIsMobile from "hooks/useIsMobile";
+import React, { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { PostItem, useGetPostListQuery } from "services/getPostList";
 import styled from "styled-components";
 import WrapperWithFollowList from "./WrapperWithFollowList";
-import LoadingPanel from "components/LoadingPanel";
 
 interface SearchParam {
   page: number;
@@ -50,9 +51,10 @@ const ListPage = () => {
     keyword: '',
     count: 20,
   });
-  const [listByPage, setListPage] = useState<PostItem[]>([]);
+  const [listData, setListData] = useState<PostItem[]>([]);
   const { data, error, isLoading } = useGetPostListQuery(param, { skip: !isInit });
   const { list = [], total = 0, page = 0, count = 0 } = data?.data || {};
+  const isMobile = useIsMobile();
   
   const showMoreButton = useMemo(() =>
     list && !error && (param.page * param.count < total),
@@ -74,7 +76,7 @@ const ListPage = () => {
 
   useEffect(() => {
     if (list?.length) {
-      setListPage(prev => [
+      setListData(prev => [
         ...prev.slice(0, page * count),
         ...list,
       ]);
@@ -85,9 +87,10 @@ const ListPage = () => {
   return (
     <Page>
       <WrapperWithFollowList>
-        <SectionTitle backTo="/" title="Results" />
+        {isMobile && <SectionTitle backTo="/" title="Home Page" />}
+        <SectionTitle backTo={isMobile ? undefined : "/"} title="Results" />
         <ListWrapper>
-          {listByPage.map(({ title, author, id, imgUrl }) => (
+          {listData.map(({ title, author, id, imgUrl }) => (
             <Box key={id}>
               <PostImage imgurl={imgUrl} />
               <Box fontSize="15px" marginTop="12px">{title}</Box>

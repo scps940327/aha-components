@@ -37,8 +37,11 @@ const AccountImg = styled.div<{ url?: string }>`
 
 const ContentWrapper = styled.div`
   flex: 1;
-  padding: 105px 20px 390px 20px;
+  padding: 105px 20px 20px 20px;
 
+  ${THEME.breakpoints.up('lg')} {
+    padding: 105px 390px 20px 20px;
+  }
   ${THEME.breakpoints.down('md')} {
     padding: 20px 20px 86px 20px;
   }

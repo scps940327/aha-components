@@ -1,9 +1,7 @@
+import { NonIndexRouteObject } from 'react-router-dom';
 import { SearchPage, TagsPage, ListPage } from '../pages';
 
-interface RouteConfig {
-  key: string;
-  path: string;
-  element: JSX.Element;
+interface RouteConfig extends NonIndexRouteObject {
   title?: string;
   isMenu?: boolean;
 }
@@ -11,19 +9,19 @@ interface RouteConfig {
 export const routes: RouteConfig[] = [
   {
     path: "/",
-    key: 'post-search',
+    id: 'post-search',
     title: 'Home',
     element: <SearchPage />,
     isMenu: true,
   },
   {
     path: "post/list",
-    key: 'post-list',
+    id: 'post-list',
     element: <ListPage />,
   },
   {
     path: "tag/list",
-    key: 'tag-list',
+    id: 'tag-list',
     title: 'Tags',
     element: <TagsPage />,
     isMenu: true,
