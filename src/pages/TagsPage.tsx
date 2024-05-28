@@ -1,8 +1,12 @@
 import { Box } from "@mui/material";
+import Button from "components/Button";
+import LoadingPanel from "components/LoadingPanel";
 import Page from "components/Page";
 import SectionTitle from 'components/SectionTitle';
 import THEME from "helpers/theme";
-import React from "react";
+import useIsMobile from "hooks/useIsMobile";
+import React, { useEffect, useMemo, useState } from "react";
+import { useGetTagListApiQuery } from "services/getTagList";
 import styled from "styled-components";
 
 interface TagItem {
@@ -53,34 +57,49 @@ const TagImg = styled.div<{ tag: string }>`
     box-sizing: border-box;
   }
 `;
+const MoreButton = styled(Button.Normal)`
+  width: 343px;
+
+  ${THEME.breakpoints.down('md')} {
+    width: 100%;
+  }
+`;
+
+const DEFAULT_PARAMS = {
+  page: 1,
+  count: 20,
+}
 
 const TagsPage = () => {
+  const [param, setParam] = useState(DEFAULT_PARAMS);
+  const [listData, setListData] = useState<TagItem[]>([]);
+  const { data, isLoading, error } = useGetTagListApiQuery(param);
+  const { list = [], total = 0, page = 0, count = 0 } = data?.data || {};
+  const isMobile = useIsMobile();
 
-  const lists: TagItem[] = [
-    {
-      title: 'happiness',
-      id: 'id_1',
-      count: 255,
-    },
-    {
-      title: 'good',
-      id: 'id_2',
-      count: 30,
-    },
-    {
-      title: 'funny',
-      id: 'id_3',
-      count: 937
+  const showMoreButton = useMemo(() =>
+    list && !error && (param.page * param.count < total),
+    [error, list, param.count, param.page, total],
+  );
+
+  useEffect(() => {
+    if (list?.length) {
+      setListData(prev => [
+        ...prev.slice(0, page * count),
+        ...list,
+      ]);
     }
-  ]
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [list]);
 
   return (
     <Page>
       <ContentWrapper>
         <Box maxWidth="846px" margin="0 auto" display="grid" gap="30px">
+          {isMobile && <SectionTitle title="Home Page" backTo="/" />}
           <SectionTitle title="Tags" />
           <ListWrapper>
-            {lists.map(({ title, count, id }) => (
+            {listData.map(({ title, count, id }) => (
               <Box key={id}>
                 <TagImg tag={title} />
                 <Box fontSize="15px" marginTop="12px">{title}</Box>
@@ -88,6 +107,13 @@ const TagsPage = () => {
               </Box>
             ))}
           </ListWrapper>
+          {isLoading && <LoadingPanel />}
+          {showMoreButton && (
+            <MoreButton
+              onClick={() => setParam(prev => ({ ...prev, page: prev.page + 1 }))}
+              disabled={isLoading}
+            >MORE</MoreButton>
+          )}
         </Box>
       </ContentWrapper>
     </Page>
