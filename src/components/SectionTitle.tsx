@@ -1,28 +1,47 @@
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { Box } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
+import THEME from 'helpers/theme';
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-interface IProps {
+interface IProps extends BoxProps {
   title: string;
   backTo?: string;
 }
+
+const Container = styled(Box)`
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 20px;
+
+  ${THEME.breakpoints.down('md')} {
+    margin-bottom: 16px;
+  }
+`;
 
 const StyledBackToLink = styled(Link)`
   color: #ffffff;
   margin-right: 12px;
 `;
 
-const SectionTitle = ({ title, backTo }: IProps) => {
+const TitleText = styled.div`
+  font-size: 30px;
+
+  ${THEME.breakpoints.down('md')} {
+    font-size: 24px;
+  }
+`;
+
+const SectionTitle = ({ title, backTo, ...containerProps }: IProps) => {
   return (
-    <Box display="flex" alignItems="flex-end" marginBottom="20px">
+    <Container {...containerProps}>
       {backTo && (
         <StyledBackToLink to={backTo}>
           <ArrowBackIosIcon />
         </StyledBackToLink>
       )}
-      <Box fontSize="24px">{title}</Box>
-    </Box>
+      <TitleText>{title}</TitleText>
+    </Container>
   )
 }
 

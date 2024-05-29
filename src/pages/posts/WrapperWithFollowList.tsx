@@ -12,6 +12,8 @@ interface AccountRowProps {
   userName: string;
   imgUrl: string;
   isFollowing?: boolean;
+  id: string;
+  onButtonClick: (param: { id: string; isFollowing: boolean }) => void;
 }
 
 const tabKey = {
@@ -37,13 +39,13 @@ const AccountImg = styled.div<{ url?: string }>`
 
 const ContentWrapper = styled.div`
   flex: 1;
-  padding: 105px 20px 20px 20px;
+  padding: 52px 20px 20px 20px;
 
   ${THEME.breakpoints.up('lg')} {
-    padding: 105px 390px 20px 20px;
+    padding-right: 390px;
   }
   ${THEME.breakpoints.down('md')} {
-    padding: 20px 20px 86px 20px;
+    padding: 0 20px 86px 20px;
   }
 `;
 
@@ -56,52 +58,76 @@ const FollowSection = styled(Box)`
   height: 100%;
   overflow-y: scroll;
   background-color: ${THEME.colors.BG_LIGHT};
+  padding-top: 19px;
 
   ${THEME.breakpoints.down('lg')} {
     display: none;
   }
 `;
 
-const AccountRow = ({ fullName, userName, imgUrl, isFollowing }: AccountRowProps) => (
+const AccountRow = ({
+  fullName,
+  userName,
+  imgUrl,
+  isFollowing,
+  onButtonClick,
+  id,
+}: AccountRowProps) => (
   <Box display="flex" alignItems="center">
     <AccountImg url={imgUrl} />
     <Box marginLeft="15px" flex="1">
       <Box>{fullName}</Box>
       <Box fontSize="14px" color="rgba(255, 255, 255, 0.5)">@{userName}</Box>
     </Box>
-    <Button.Outlined isActive={isFollowing}>{isFollowing ? 'Following' : 'Follow'}</Button.Outlined>
+    {isFollowing
+      ? (
+        <Button.Contained onClick={() => onButtonClick({ id, isFollowing: false })}>
+          Following
+        </Button.Contained>
+      )
+      : (
+        <Button.Outlined onClick={() => onButtonClick({ id, isFollowing: true })}>
+          Follow
+        </Button.Outlined>
+      )
+    }
   </Box>
 );
 
 const FollowList = () => {
-  const [activeTab, setActiveTab] = useState(tabKey.following);
+  const [activeTab, setActiveTab] = useState(tabKey.followers);
   const { data, error, isLoading, refetch } = useGetFollowerListApiQuery();
 
-  const followerList = useMemo(() => (data?.data.list ?? []).filter(({ isFollowing }) => isFollowing), [data?.data.list]);
+  const followingList = useMemo(() =>
+    (data?.data.list ?? []).filter(({ isFollowing }) => isFollowing),
+    [data?.data.list],
+  );
 
   return (
     <Box>
       <StyledTabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)}>
+        <Tab label="Followers" value={tabKey.followers} />
         <Tab label="Following" value={tabKey.following} />
-        <Tab label="Follower" value={tabKey.followers} />
       </StyledTabs>
       {error ? (
-        <Button.Normal onClick={refetch}>Refresh</Button.Normal>
+        <Box textAlign="center" padding="20px">
+          <Button.Normal onClick={refetch}>Refresh</Button.Normal>
+        </Box>
       ) : (
         <>
-          {activeTab === tabKey.following && (
-            <Box padding="32px 16px" overflow="scroll" display="grid" gap="20px">
+          {activeTab === tabKey.followers && (
+            <Box padding="32px 16px" overflow="scroll" display="grid" gap="16px">
               {isLoading && <LoadingPanel />}
               {data?.data.list.map((item) => (
-                <AccountRow key={item.id} {...item} />
+                <AccountRow key={item.id} {...item} onButtonClick={refetch} />
               ))}
             </Box>
           )}
-          {activeTab === tabKey.followers && (
-            <Box padding="32px 16px" overflow="scroll" display="grid" gap="20px">
+          {activeTab === tabKey.following && (
+            <Box padding="32px 16px" overflow="scroll" display="grid" gap="16px">
               {isLoading && <LoadingPanel />}
-              {followerList.map((item) => (
-                <AccountRow key={item.id} {...item} />
+              {followingList.map((item) => (
+                <AccountRow key={item.id} {...item} onButtonClick={refetch} />
               ))}
             </Box>
           )}
@@ -115,7 +141,7 @@ const WrapperWithFollowList = ({ children }: PropsWithChildren<{}>) => {
   return (
     <Box display="flex">
       <ContentWrapper>
-        <Box maxWidth="725px" margin="0 auto" display="grid" gap="30px">
+        <Box maxWidth="725px" margin="0 auto" display="grid">
           {children}
         </Box>
       </ContentWrapper>

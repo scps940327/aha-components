@@ -5,6 +5,7 @@ import styled from "styled-components";
 import PageHeader from "./PageHeader";
 
 type Props = PropsWithChildren<{
+  isMobileSubPage?: boolean;
 }>
 
 const PageContainer = styled.div`
@@ -13,16 +14,17 @@ const PageContainer = styled.div`
   color: #ffffff;
   display: flex;
   align-items: stretch;
+  position: relative;
 
   ${THEME.breakpoints.down('md')} {
     flex-direction: column;
   }
 `;
 
-const Page = ({ children }: Props) => {
+const Page = ({ children, isMobileSubPage }: Props) => {
   return (
     <PageContainer>
-      <PageHeader />
+      <PageHeader isMobileSubPage={isMobileSubPage} />
       <Box flex="1">
         {children}
       </Box>

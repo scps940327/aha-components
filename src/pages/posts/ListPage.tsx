@@ -17,14 +17,23 @@ interface SearchParam {
   keyword: string;
 }
 
+const SectionTitleWrapper = styled.div`
+  margin-top: 40px;
+
+  ${THEME.breakpoints.up('md')} {
+    margin-left: -34px;
+    margin-bottom:4px;
+  }
+`;
+
 const ListWrapper = styled.div`
   display: grid;
   gap: 31px 34px;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
 
   ${THEME.breakpoints.down('md')} {
     gap: 40px 0;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 `;
 
@@ -36,10 +45,15 @@ const PostImage = styled.div<{ imgurl: string }>`
 `;
 
 const MoreButton = styled(Button.Normal)`
-  width: 343px;
+  &.MuiButtonBase-root {
+    ${THEME.breakpoints.up('md')} {
+      margin-top: 39px;
+      width: 343px;
+    }
 
-  ${THEME.breakpoints.down('md')} {
-    width: 100%;
+    ${THEME.breakpoints.down('md')} {
+      width: 100%;
+    }
   }
 `;
 
@@ -85,15 +99,24 @@ const ListPage = () => {
   }, [list]);
 
   return (
-    <Page>
+    <Page isMobileSubPage>
       <WrapperWithFollowList>
-        {isMobile && <SectionTitle backTo="/" title="Home Page" />}
-        <SectionTitle backTo={isMobile ? undefined : "/"} title="Results" />
+        <SectionTitleWrapper>
+          <SectionTitle backTo={isMobile ? undefined : "/"} title="Results" />
+        </SectionTitleWrapper>
         <ListWrapper>
           {listData.map(({ title, author, id, imgUrl }) => (
             <Box key={id}>
               <PostImage imgurl={imgUrl} />
-              <Box fontSize="15px" marginTop="12px">{title}</Box>
+              <Box
+                fontSize="15px"
+                marginTop="12px"
+                overflow="hidden"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+              >
+                {title}
+              </Box>
               <Box color="#b2b2b2" fontSize="11.17px">{author}</Box>
             </Box>
           ))}
@@ -105,7 +128,9 @@ const ListPage = () => {
           <MoreButton
             onClick={() => setParam(prev => ({ ...prev, page: prev.page + 1 }))}
             disabled={isLoading}
-          >MORE</MoreButton>
+          >
+            MORE
+          </MoreButton>
         )}
       </WrapperWithFollowList>
     </Page>

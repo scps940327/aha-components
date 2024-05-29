@@ -2,7 +2,6 @@ import { Box } from "@mui/material";
 import Button from "components/Button";
 import Input from "components/Input";
 import Page from "components/Page";
-import SectionTitle from "components/SectionTitle";
 import Slider from "components/Slider";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -13,11 +12,37 @@ import WrapperWithFollowList from "./WrapperWithFollowList";
 import { useForm } from "react-hook-form";
 
 const SearchButton = styled(Button.Normal)`
-  width: 343px;
+  &.MuiButtonBase-root {
+    position: absolute;
 
-  ${THEME.breakpoints.down('md')} {
-    width: 100%;
+    ${THEME.breakpoints.up('md')} {
+      width: 343px;
+      bottom: 87px;
+    }
+
+    ${THEME.breakpoints.down('md')} {
+      &.MuiButtonBase-root {
+        left: 20px;
+        bottom: 90px;
+        width: calc(100% - 40px);
+      }
+    }
   }
+`;
+
+const FormFieldWrapper = styled.div`
+  ${THEME.breakpoints.up('md')} {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+  }
+`;
+
+const FormFieldLabel = styled.div`
+  font-size: 24px;
+  font-weight: normal;
+  line-height: 36px;
+  margin-bottom: 20px;
 `;
 
 const DEFAULT_PER_PAGE_COUNT_CONFIG_INDEX = 4;
@@ -38,18 +63,17 @@ const SearchPage = () => {
   return (
     <Page>
       <WrapperWithFollowList>
-        <Box borderBottom="1px solid rgba(255, 255, 255, 0.1)" paddingBottom="30px">
-          <SectionTitle title="Search" />
+        <FormFieldWrapper>
+          <FormFieldLabel>Search</FormFieldLabel>
           <Input
             {...register(searchFormKey.KEYWORD)}
             placeholder="Keyword"
             variant="outlined"
             fullWidth
-            // onChange={(e) => setKeyword(e.target.value)}
           />
-        </Box>
-        <Box borderBottom="1px solid rgba(255, 255, 255, 0.1)" paddingBottom="30px">
-          <SectionTitle title="# of results per page" />
+        </FormFieldWrapper>
+        <FormFieldWrapper>
+          <FormFieldLabel># of results per page</FormFieldLabel>
           <Box display="flex" alignItems="baseline">
             <Box fontSize="48px" fontWeight="700" marginRight="10px">{countValue}</Box>
             <Box fontSize="16px">results</Box>
@@ -66,7 +90,7 @@ const SearchPage = () => {
               perPageCountConfigs[value as number].value
             )}
           />
-        </Box>
+        </FormFieldWrapper>
         <Link to={`post/list?keyword=${keywordValue}&count=${countValue}`}>
           <SearchButton>SEARCH</SearchButton>
         </Link>

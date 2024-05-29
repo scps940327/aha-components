@@ -4,7 +4,6 @@ import LoadingPanel from "components/LoadingPanel";
 import Page from "components/Page";
 import SectionTitle from 'components/SectionTitle';
 import THEME from "helpers/theme";
-import useIsMobile from "hooks/useIsMobile";
 import React, { useEffect, useMemo, useState } from "react";
 import { useGetTagListApiQuery } from "services/getTagList";
 import styled from "styled-components";
@@ -16,11 +15,18 @@ interface TagItem {
 }
 
 const ContentWrapper = styled.div`
-  padding: 105px 20px;
+  padding: 60px 20px 20px 20px;
 
   ${THEME.breakpoints.down('md')} {
-    padding: 20px 20px 86px 20px;
+    padding: 0 20px 86px 20px;
   }
+`;
+
+const ContentMaxWidthWrapper = styled.div`
+  max-width: 846px;
+  margin: 0 auto;
+  display: grid;
+  gap: 24px;
 `;
 
 const ListWrapper = styled.div`
@@ -31,6 +37,7 @@ const ListWrapper = styled.div`
   ${THEME.breakpoints.down('md')} {
     gap: 24px;
     grid-template-columns: 1fr 1fr;
+    padding: 0 5px;
   }
 `;
 
@@ -49,7 +56,7 @@ const TagImg = styled.div<{ tag: string }>`
     border-radius: 8px;
     font-size: 24px;
     font-weight: 700;
-    padding: 7px 14px;
+    padding: 3px 14px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -57,11 +64,15 @@ const TagImg = styled.div<{ tag: string }>`
     box-sizing: border-box;
   }
 `;
-const MoreButton = styled(Button.Normal)`
-  width: 343px;
 
-  ${THEME.breakpoints.down('md')} {
-    width: 100%;
+const MoreButton = styled(Button.Normal)`
+  &.MuiButtonBase-root {
+    width: 343px;
+    margin-top: 15px;
+
+    ${THEME.breakpoints.down('md')} {
+      width: 100%;
+    }
   }
 `;
 
@@ -75,7 +86,6 @@ const TagsPage = () => {
   const [listData, setListData] = useState<TagItem[]>([]);
   const { data, isLoading, error } = useGetTagListApiQuery(param);
   const { list = [], total = 0, page = 0, count = 0 } = data?.data || {};
-  const isMobile = useIsMobile();
 
   const showMoreButton = useMemo(() =>
     list && !error && (param.page * param.count < total),
@@ -93,17 +103,32 @@ const TagsPage = () => {
   }, [list]);
 
   return (
-    <Page>
+    <Page isMobileSubPage>
       <ContentWrapper>
-        <Box maxWidth="846px" margin="0 auto" display="grid" gap="30px">
-          {isMobile && <SectionTitle title="Home Page" backTo="/" />}
-          <SectionTitle title="Tags" />
+        <ContentMaxWidthWrapper>
+          <SectionTitle title="Tags" margin="20px 0 0 0" />
           <ListWrapper>
             {listData.map(({ title, count, id }) => (
               <Box key={id}>
                 <TagImg tag={title} />
-                <Box fontSize="15px" marginTop="12px">{title}</Box>
-                <Box color="#b2b2b2" fontSize="11.17px">{count} results</Box>
+                {/* <TagItemTitle>{title}</TagItemTitle> */}
+                <Box
+                  color="#ffffff"
+                  fontSize="14.9px"
+                  lineHeight="22.35px"
+                  letterSpacing="0.14px"
+                  marginTop="10px"
+                >
+                  {title}
+                </Box>
+                <Box
+                  color="#b2b2b2"
+                  fontSize="11.17px"
+                  lineHeight="16.76px"
+                  letterSpacing="0.37px"
+                >
+                  {count} results
+                </Box>
               </Box>
             ))}
           </ListWrapper>
@@ -114,7 +139,7 @@ const TagsPage = () => {
               disabled={isLoading}
             >MORE</MoreButton>
           )}
-        </Box>
+        </ContentMaxWidthWrapper>
       </ContentWrapper>
     </Page>
   )

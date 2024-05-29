@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { routes } from "../constants/route";
 import LogoIcon from "./LogoIcon";
+import SectionTitle from "./SectionTitle";
 
 const PageHeaderContainer = styled.div`
   background-color: ${THEME.colors.BG_LIGHT};
@@ -12,15 +13,37 @@ const PageHeaderContainer = styled.div`
     background-color: ${THEME.colors.BG_DARK};
     width: 100%;
     padding-left: 21px;
+    height: 70px;
+    display: flex;
+    align-items: center;
   }
 `;
 
-const LogoWrapper = styled.div`
-  margin: 20px 0;
-  text-align: center;
+const LogoWrapper = styled.div<{ isMobileSubPage?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ${THEME.breakpoints.up('md')} {
+    height: 88px;
+  }
 
   ${THEME.breakpoints.down('md')} {
-    text-align: left;
+    ${({ isMobileSubPage }) => isMobileSubPage
+      ? 'display: none;'
+      : 'text-align: left;'
+    }
+  }
+`;
+
+const BackHomeWrapper = styled.div<{ isMobileSubPage?: boolean }>`
+  display: none;
+
+  ${THEME.breakpoints.down('md')} {
+    ${({ isMobileSubPage }) => isMobileSubPage
+      ? 'display: block;'
+      : ''
+    }
   }
 `;
 
@@ -59,8 +82,12 @@ const MenuItemIcon = styled.div<{ isActive?: boolean }>`
 const StyledMenuItem = styled(Link)<{ isActive?: boolean }>`
   color: ${({ isActive }) => isActive ? '#ffffff' : '#8A8A8F'};
   text-align: center;
-  display: block;
-  padding: 20px;
+
+  ${THEME.breakpoints.up('md')} {
+    display: block;
+    padding: 7px;
+    height: 42px;
+  }
 
   ${THEME.breakpoints.down('md')} {
     padding: 0;
@@ -81,9 +108,14 @@ const StyledMenuItem = styled(Link)<{ isActive?: boolean }>`
   }
 `;
 
-const StyledMenuUl = styled.ul<{ isHome?: boolean }>`
+const StyledMenuUl = styled.ul<{ isMobileSubPage?: boolean }>`
   padding: 0;
   margin: 0;
+
+  ${THEME.breakpoints.up('md')} {
+    display: grid;
+    gap: 8px;
+  }
 
   ${THEME.breakpoints.down('md')} {
     position: fixed;
@@ -92,7 +124,7 @@ const StyledMenuUl = styled.ul<{ isHome?: boolean }>`
     left: 0;
     background-color: ${THEME.colors.BG_LIGHT};
     box-shadow: 0px 0.5px 0px 0px #000000CC inset;
-    display: ${({ isHome }) => isHome ? 'flex' : 'none'};
+    display: ${({ isMobileSubPage }) => isMobileSubPage ? 'none' : 'flex'};
     align-items: center;
     justify-content: center;
     height: 66px;
@@ -109,19 +141,21 @@ const StyledMenuUl = styled.ul<{ isHome?: boolean }>`
 
 const formatRoutePathToPathname = (path?: string) => path?.startsWith('/') ? path : `/${path}`;
 
-const PageHeader = () => {
+const PageHeader = ({ isMobileSubPage }: { isMobileSubPage?: boolean }) => {
   const location = useLocation();
-  const isHome = location.pathname === '/';
   const currentRouteConfig = routes.find(({ path = '' }) =>
     formatRoutePathToPathname(path) === location.pathname
 );
 
   return (
     <PageHeaderContainer>
-      <LogoWrapper>
+      <LogoWrapper isMobileSubPage={isMobileSubPage}>
         <LogoIcon />
       </LogoWrapper>
-      <StyledMenuUl isHome={isHome}>
+      <BackHomeWrapper isMobileSubPage={isMobileSubPage}>
+        <SectionTitle title="Home Page" backTo="/" marginBottom="0" />
+      </BackHomeWrapper>
+      <StyledMenuUl isMobileSubPage={isMobileSubPage}>
         {routes.map(({ path = '', title, id, isMenu }) => {
           if (!isMenu) {
             return null;
